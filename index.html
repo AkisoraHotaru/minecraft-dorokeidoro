@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイクラドロケイドロ - 公式ルール・図鑑データベース</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1p:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1p', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .glow-box {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+        }
+    </style>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'text-gray-900');
+                btn.classList.add('bg-gray-800', 'text-gray-300');
+            });
+            document.getElementById('btn-' + tabId).classList.remove('bg-gray-800', 'text-gray-300');
+            document.getElementById('btn-' + tabId).classList.add('bg-emerald-600', 'text-gray-900', 'font-extrabold');
+        }
+
+        // 職業詳細モーダルのデータ（全25種類 ＋ 一覧用のランク情報）
+        const jobData = {
+            1: {
+                no: "No.001", name: "無職", price: "0G (初期)", img: "images/job_icon/musyoku.png",
+                escape: "15秒", recover: "3秒", rescue: "5秒", atk: "15", def: "5", ct: "なし",
+                skill: "【スキル：なし】", desc: "脱出時にもらえるスコアが1.5倍",
+                rankAtk: "C", rankEsc: "C", rankSup: "D"
+            },
+            2: {
+                no: "No.002", name: "スポーツ選手", price: "100G", img: "images/job_icon/syunsoku.png",
+                escape: "16秒", recover: "3秒", rescue: "3.5秒", atk: "20", def: "5", ct: "40秒",
+                skill: "【スキル：俊足】", desc: "3秒間足が速くなる",
+                rankAtk: "B", rankEsc: "A", rankSup: "D"
+            },
+            3: {
+                no: "No.003", name: "医者", price: "100G", img: "images/job_icon/iryo_kit.png",
+                escape: "10秒", recover: "2秒", rescue: "6秒", atk: "10", def: "4", ct: "30秒",
+                skill: "【スキル：医療キット】", desc: "周囲の味方のＨＰを8回復する<br><span class='text-yellow-300'>近くにいる味方の回復速度UP</span>",
+                rankAtk: "D", rankEsc: "B", rankSup: "S"
+            },
+            4: {
+                no: "No.004", name: "トラッパー", price: "300G", img: "images/job_icon/torabasamin.png",
+                escape: "24秒", recover: "5秒", rescue: "3秒", atk: "10", def: "4", ct: "45秒",
+                skill: "【スキル：トラバサミ】", desc: "踏んだ動きを止める罠を仕掛ける",
+                rankAtk: "C", rankEsc: "B", rankSup: "B"
+            },
+            5: {
+                no: "No.005", name: "下着ドロボー", price: "100G", img: "images/job_icon/pantu.png",
+                escape: "17秒", recover: "2.5秒", rescue: "5秒", atk: "15", def: "6", ct: "60秒",
+                skill: "【スキル：パンツ】", desc: "10秒間警察が透けて見える",
+                rankAtk: "B", rankEsc: "B", rankSup: "A"
+            },
+            6: {
+                no: "No.006", name: "元ヤン", price: "500G", img: "images/job_icon/kobusi.png",
+                escape: "20秒", recover: "4秒", rescue: "3秒", atk: "25", def: "5", ct: "80秒",
+                skill: "【スキル：拳】", desc: "近くの相手と取っ組み合いをしてしばらくそこにとどめる",
+                rankAtk: "S", rankEsc: "B", rankSup: "B"
+            },
+            7: {
+                no: "No.007", name: "探偵", price: "300G", img: "images/job_icon/musimegane.png",
+                escape: "10秒", recover: "2.5秒", rescue: "4秒", atk: "10", def: "5", ct: "40秒",
+                skill: "【スキル：虫眼鏡】", desc: "味方の位置とミッションの位置を20秒特定する<br><span class='text-yellow-300'>近くの宝箱の位置がわかる</span>",
+                rankAtk: "D", rankEsc: "C", rankSup: "S"
+            },
+            8: {
+                no: "No.008", name: "魔法使い", price: "300G", img: "images/job_icon/wand.png",
+                escape: "18秒", recover: "2秒", rescue: "5秒", atk: "10", def: "3", ct: "15秒",
+                skill: "【スキル：魔法の杖】", desc: "魔法を飛ばして遠くの相手に小スタン",
+                rankAtk: "A", rankEsc: "B", rankSup: "C"
+            },
+            9: {
+                no: "No.009", name: "アイドル", price: "100G", img: "images/job_icon/mic.png",
+                escape: "25秒", recover: "4秒", rescue: "4秒", atk: "15", def: "4", ct: "40秒",
+                skill: "【スキル：マイク】", desc: "発光して近くの味方を回復、しかし警察を呼び寄せる",
+                rankAtk: "B", rankEsc: "C", rankSup: "A"
+            },
+            10: {
+                no: "No.010", name: "農家", price: "300G", img: "images/job_icon/kuwa.png",
+                escape: "17秒", recover: "2秒", rescue: "5秒", atk: "18", def: "5", ct: "30秒",
+                skill: "【スキル：家宝のクワ】", desc: "畑エリアを展開して踏んだ者の移動速度を下げる<br><span class='text-yellow-300'>畑エリアの効果を受けない</span>",
+                rankAtk: "B", rankEsc: "B", rankSup: "A"
+            },
+            11: {
+                no: "No.011", name: "空間術師", price: "500G", img: "images/job_icon/ramdom_paneru.png",
+                escape: "25秒", recover: "3秒", rescue: "4秒", atk: "5", def: "5", ct: "40秒",
+                skill: "【スキル：ランダムワープパネル】", desc: "踏んだらランダムな場所にワープするパネルを設置する",
+                rankAtk: "D", rankEsc: "B", rankSup: "A"
+            },
+            12: {
+                no: "No.012", name: "教師", price: "300G", img: "images/job_icon/note.png",
+                escape: "11秒", recover: "3秒", rescue: "3秒", atk: "18", def: "5", ct: "30秒",
+                skill: "【スキル：宿題ノート】", desc: "近くの味方のクールタイムを0にする<br><span class='text-yellow-300'>近くの宝箱の位置がわかる</span>",
+                rankAtk: "B", rankEsc: "C", rankSup: "S"
+            },
+            13: {
+                no: "No.013", name: "配達員", price: "300G", img: "images/job_icon/danboru.png",
+                escape: "19秒", recover: "3秒", rescue: "4秒", atk: "15", def: "5", ct: "20秒",
+                skill: "【スキル：配達品】", desc: "近くの味方にランダムアイテムをプレゼントする",
+                rankAtk: "C", rankEsc: "C", rankSup: "A"
+            },
+            14: {
+                no: "No.014", name: "料理人", price: "300G", img: "images/job_icon/huraipan.png",
+                escape: "16秒", recover: "2.5秒", rescue: "5秒", atk: "15", def: "5", ct: "40秒",
+                skill: "【スキル：育ったフライパン】", desc: "自分も含めた周りの味方の足を15秒間ちょっと速くする<br><span class='text-yellow-300'>ご飯を食べた時周りの味方も少し回復</span>",
+                rankAtk: "B", rankEsc: "A", rankSup: "A"
+            },
+            15: {
+                no: "No.015", name: "花火師", price: "300G", img: "images/job_icon/hanabidama.png",
+                escape: "14秒", recover: "4秒", rescue: "6秒", atk: "18", def: "6", ct: "10秒",
+                skill: "【スキル：爆発花火】", desc: "自分も含め周りに爆発ダメージ",
+                rankAtk: "A", rankEsc: "B", rankSup: "D"
+            },
+            16: {
+                no: "No.016", name: "音楽家", price: "300G", img: "images/job_icon/viorin.png",
+                escape: "10秒", recover: "2秒", rescue: "4秒", atk: "10", def: "4", ct: "30秒",
+                skill: "【スキル：ギーギーバイオリン】", desc: "最大3人の警察を呼び寄せる",
+                rankAtk: "C", rankEsc: "B", rankSup: "B"
+            },
+            17: {
+                no: "No.017", name: "車掌", price: "300G", img: "images/job_icon/densya.png",
+                escape: "16秒", recover: "3秒", rescue: "4秒", atk: "10", def: "5", ct: "25秒",
+                skill: "【スキル：特急電車】", desc: "壁に当たるまで猛スピードで直進する",
+                rankAtk: "A", rankEsc: "A", rankSup: "C"
+            },
+            18: {
+                no: "No.018", name: "ナイト", price: "300G", img: "images/job_icon/knight_shield.png",
+                escape: "30秒", recover: "5秒", rescue: "3秒", atk: "5", def: "10 <span class='text-xs text-yellow-400'>(スキル時:13)</span>", ct: "30秒",
+                skill: "【スキル：ナイトシールド】", desc: "10秒間防御力が上がる",
+                rankAtk: "C", rankEsc: "A", rankSup: "A"
+            },
+            19: {
+                no: "No.019", name: "海賊", price: "500G", img: "images/job_icon/ikari.png",
+                escape: "15秒", recover: "4秒", rescue: "4秒", atk: "20", def: "5", ct: "15秒",
+                skill: "【スキル：キャプテンの碇】", desc: "壁に当たったらそこまで直進、人に当たったら引き寄せる<br><span class='text-yellow-300'>近くの宝箱の位置がわかる</span>",
+                rankAtk: "A", rankEsc: "A", rankSup: "B"
+            },
+            20: {
+                no: "No.020", name: "忍者", price: "500G", img: "images/job_icon/syuriken.png",
+                escape: "16秒", recover: "3秒", rescue: "4秒", atk: "18", def: "5", ct: "40秒",
+                skill: "【スキル：変わり身の術】", desc: "ランダムな味方と位置をチェンジする<br><span class='text-yellow-300'>近くの宝箱の位置がわかる</span>",
+                rankAtk: "B", rankEsc: "A", rankSup: "D"
+            },
+            21: {
+                no: "No.021", name: "カメラマン", price: "300G", img: "images/job_icon/camera.png",
+                escape: "20秒", recover: "3秒", rescue: "5秒", atk: "10", def: "5", ct: "25秒",
+                skill: "【スキル：フラッシュカメラ】", desc: "フラッシュで前方相手にスタン",
+                rankAtk: "B", rankEsc: "B", rankSup: "A"
+            },
+            22: {
+                no: "No.022", name: "ラバー", price: "500G", img: "images/job_icon/lover_heart.png",
+                escape: "30秒 <span class='text-yellow-400'>(60秒)</span>", recover: "3秒 <span class='text-yellow-400'>(1秒･10秒)</span>", rescue: "5秒 <span class='text-yellow-400'>(1秒･10秒)</span>", atk: "15 <span class='text-yellow-400'>(40･3)</span>", def: "5 <span class='text-yellow-400'>(10･0)</span>", ct: "0秒",
+                skill: "【スキル：ラブハート】", desc: "パートナーといると能力超UP",
+                rankAtk: "SS", rankEsc: "SS", rankSup: "SS"
+            },
+            23: {
+                no: "No.023", name: "株主優待者", price: "300G", img: "images/job_icon/yutaiken.png",
+                escape: "14秒", recover: "4秒", rescue: "4秒", atk: "10", def: "5", ct: "35秒",
+                skill: "【スキル：タクチケ】", desc: "優待券で近くの牢屋の前に行ける",
+                rankAtk: "D", rankEsc: "B", rankSup: "A"
+            },
+            24: {
+                no: "No.024", name: "ボディビルダー", price: "500G", img: "images/job_icon/muscle.png",
+                escape: "12秒", recover: "4秒", rescue: "3秒", atk: "25", def: "5", ct: "5分",
+                skill: "【スキル：全てを解決する筋肉】", desc: "牢屋から自力で脱出する自慢の筋肉でね",
+                rankAtk: "S", rankEsc: "A", rankSup: "D"
+            },
+            25: {
+                no: "No.025", name: "ものまね士", price: "500G", img: "images/job_icon/monomanesi.png",
+                escape: "20秒", recover: "3秒", rescue: "5秒", atk: "10", def: "5", ct: "25秒",
+                skill: "【スキル：ものまねドール】", desc: "デコイになる人形を置く",
+                rankAtk: "C", rankEsc: "A", rankSup: "A"
+            }
+        };
+
+        function openJobModal(id) {
+            const data = jobData[id];
+            if (!data) return;
+
+            document.getElementById('modal-no').innerText = data.no;
+            document.getElementById('modal-name').innerText = data.name;
+            document.getElementById('modal-price').innerText = data.price;
+            document.getElementById('modal-img').src = data.img;
+            document.getElementById('modal-escape').innerHTML = data.escape;
+            document.getElementById('modal-recover').innerHTML = data.recover;
+            document.getElementById('modal-rescue').innerHTML = data.rescue;
+            document.getElementById('modal-atk').innerHTML = data.atk;
+            document.getElementById('modal-def').innerHTML = data.def;
+            document.getElementById('modal-ct').innerText = data.ct;
+            document.getElementById('modal-skill-title').innerHTML = data.skill;
+            document.getElementById('modal-skill-desc').innerHTML = data.desc;
+
+            document.getElementById('job-modal').classList.remove('hidden');
+            document.getElementById('job-modal').classList.add('flex');
+        }
+
+        function closeJobModal() {
+            document.getElementById('job-modal').classList.remove('flex');
+            document.getElementById('job-modal').classList.add('hidden');
+        }
+    </script>
+</head>
+<body class="min-h-screen relative">
+    <!-- Header -->
+    <header class="bg-gray-900 border-b border-gray-800 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="bg-emerald-500 text-gray-900 font-extrabold px-3 py-1.5 rounded-lg text-lg">監獄からの大脱獄</span>
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-wider text-white">マイクラドロケイドロ</h1>
+            </div>
+            <nav class="flex flex-wrap justify-center gap-2 text-sm sm:text-base font-bold">
+                <button id="btn-rules" onclick="switchTab('rules')" class="tab-btn px-4 py-2 bg-emerald-600 text-gray-900 rounded-lg transition">基本ルール</button>
+                <button id="btn-jobs" onclick="switchTab('jobs')" class="tab-btn px-4 py-2 bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-gray-900 rounded-lg transition">職業図鑑</button>
+                <button id="btn-items" onclick="switchTab('items')" class="tab-btn px-4 py-2 bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-gray-900 rounded-lg transition">アイテム図鑑</button>
+                <button id="btn-patch" onclick="switchTab('patch')" class="tab-btn px-4 py-2 bg-gray-800 text-gray-300 hover:bg-emerald-600 hover:text-gray-900 rounded-lg transition">パッチノート</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 space-y-12">
+        <!-- Hero Section -->
+        <section class="text-center py-10 bg-gradient-to-b from-gray-900 to-gray-900/50 rounded-2xl border border-gray-800 p-6 glow-box">
+            <span class="text-emerald-400 font-bold text-sm tracking-widest uppercase bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-800/50">Minecraft MiniGame Guide</span>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-4 mb-4">マイクラドロケイドロ</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+                CPU警察の監視をかいくぐり、脱獄を目指せ！<br>多彩な職業とミッション、仲間との協力？をして大脱獄！。
+            </p>
+        </section>
+
+        <!-- Rules Tab Content -->
+        <div id="rules" class="tab-content space-y-6">
+            <div class="border-l-4 border-emerald-500 pl-4">
+                <h3 class="text-2xl font-extrabold text-white">ゲーム基本ルール & システム</h3>
+                <p class="text-gray-400 text-sm">ゲームの進行やステータスの仕様について</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">⏱️ 制限時間とミッション</h4>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>制限時間10分：</strong>経過後に脱出口が出現！以降、<strong>1分ごとに警察が増加</strong>していきます。</div></li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>ミッション：</strong>10分間に約5回発生。失敗すると警察が増えるなどのペナルティが発生します。</div></li>
+                    </ul>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">🚪 脱出口の仕組み</h4>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>1階（個人脱出口）：</strong>マップの中心に出現。シフト長押しで自分ひとりが脱獄可能。</div></li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>2階（共通脱出口）：</strong>牢屋の対角線上。「人数×12.5秒」のシフト長押しで開放。一度開けば誰でも右クリックで脱獄可能！</div></li>
+                    </ul>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">📊 ステータスの詳細</h4>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>脱出時間：</strong>個人の脱獄地点で脱獄成功するまでに必要な時間。</div></li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>回復時間：</strong>シフトを押し続けてHPを回復できるまでの時間（自動回復なし）。</div></li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>救出時間：</strong>牢屋の前でシフトを押して仲間を救出するまでの時間。</div></li>
+                    </ul>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">⚔️ 攻撃力と防御力の計算仕様</h4>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-2"><span class="text-red-400 font-bold">・</span><div><strong>攻撃力：</strong>そのままの数値が警察へのダメージになり、HPが0になると警察はしばらくその場で気絶して起き上がります。</div></li>
+                        <li class="flex items-start gap-2"><span class="text-blue-400 font-bold">・</span><div><strong>防御力：</strong>警察の攻撃力（基本15）から防御力を引いた数分ダメージを受けます。防御力の方が高くなった場合は1ダメージになります。</div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs Tab Content -->
+        <div id="jobs" class="tab-content hidden space-y-6">
+            <div class="border-l-4 border-emerald-500 pl-4">
+                <h3 class="text-2xl font-extrabold text-white">職業・役職図鑑</h3>
+                <p class="text-gray-400 text-sm">カードをクリックすると、詳細な数値やスキル効果を確認できます！</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 1. 無職 -->
+                <div onclick="openJobModal(1)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/musyoku.png" alt="無職" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.001</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">無職</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">0G </span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 2. スポーツ選手 -->
+                <div onclick="openJobModal(2)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/syunsoku.png" alt="スポーツ選手" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.002</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">スポーツ選手</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">100G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 3. 医者 -->
+                <div onclick="openJobModal(3)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/iryo_kit.png" alt="医者" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.003</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">医者</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">100G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-red-400 bg-red-950/60 border-red-800/60 font-bold">S</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 4. トラッパー -->
+                <div onclick="openJobModal(4)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/torabasamin.png" alt="トラッパー" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.004</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">トラッパー</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 5. 下着ドロボー -->
+                <div onclick="openJobModal(5)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/pantu.png" alt="下着ドロボー" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.005</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">下着ドロボー</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">100G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 6. 元ヤン -->
+                <div onclick="openJobModal(6)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/kobusi.png" alt="元ヤン" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.006</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">元ヤン</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">500G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-red-400 bg-red-950/60 border-red-800/60 font-bold">S</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 7. 探偵 -->
+                <div onclick="openJobModal(7)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/musimegane.png" alt="探偵" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.007</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">探偵</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-red-400 bg-red-950/60 border-red-800/60 font-bold">S</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 8. 魔法使い -->
+                <div onclick="openJobModal(8)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/wand.png" alt="魔法使い" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.008</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">魔法使い</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 9. アイドル -->
+                <div onclick="openJobModal(9)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/mic.png" alt="アイドル" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.009</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">アイドル</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">100G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 10. 農家 -->
+                <div onclick="openJobModal(10)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/kuwa.png" alt="農家" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.010</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">農家</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 11. 空間術師 -->
+                <div onclick="openJobModal(11)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/ramdom_paneru.png" alt="空間術師" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.011</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">空間術師</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">500G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 12. 教師 -->
+                <div onclick="openJobModal(12)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/note.png" alt="教師" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.012</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">教師</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-red-400 bg-red-950/60 border-red-800/60 font-bold">S</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 13. 配達員 -->
+                <div onclick="openJobModal(13)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/danboru.png" alt="配達員" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.013</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">配達員</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 14. 料理人 -->
+                <div onclick="openJobModal(14)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/huraipan.png" alt="料理人" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.014</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">料理人</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 15. 花火師 -->
+                <div onclick="openJobModal(15)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/hanabidama.png" alt="花火師" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.015</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">花火師</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 16. 音楽家 -->
+                <div onclick="openJobModal(16)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/viorin.png" alt="音楽家" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.016</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">音楽家</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 17. 車掌 -->
+                <div onclick="openJobModal(17)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/densya.png" alt="車掌" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.017</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">車掌</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 18. ナイト -->
+                <div onclick="openJobModal(18)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/knight_shield.png" alt="ナイト" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.018</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">ナイト</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 19. 海賊 -->
+                <div onclick="openJobModal(19)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/ikari.png" alt="海賊" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.019</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">海賊</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">500G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 20. 忍者 -->
+                <div onclick="openJobModal(20)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/syuriken.png" alt="忍者" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.020</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">忍者</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">500G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 21. カメラマン -->
+                <div onclick="openJobModal(21)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/camera.png" alt="カメラマン" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.021</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">カメラマン</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 22. ラバー -->
+                <div onclick="openJobModal(22)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/lover_heart.png" alt="ラバー" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.022</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">ラバー</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">500G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-purple-400 bg-purple-950/60 border-purple-800/60 font-bold">?</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-purple-400 bg-purple-950/60 border-purple-800/60 font-bold">?</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-purple-400 bg-purple-950/60 border-purple-800/60 font-bold">?</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 23. 株主優待者 -->
+                <div onclick="openJobModal(23)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/yutaiken.png" alt="株主優待者" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.023</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">株主優待者</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">300G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-emerald-400 bg-emerald-950/60 border-emerald-800/60 font-bold">B</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 24. ボディビルダー -->
+                <div onclick="openJobModal(24)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/muscle.png" alt="ボディビルダー" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.024</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">ボディビルダー</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">500G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-red-400 bg-red-950/60 border-red-800/60 font-bold">S</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-gray-400 bg-gray-800 border-gray-700 font-bold">D</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+
+                <!-- 25. ものまね士 -->
+                <div onclick="openJobModal(25)" class="bg-gray-900 border border-gray-800 hover:border-emerald-500 cursor-pointer rounded-xl p-5 flex flex-col justify-between transition transform hover:-translate-y-1 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="images/job_icon/monomanesi.png" alt="ものまね士" class="w-10 h-10 object-contain bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2 py-0.5 rounded">No.025</span>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">ものまね士</h4>
+                            </div>
+                        </div>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">500G</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
+                        <div class="flex gap-2.5 items-center">
+                            <span>戦闘: <strong class="px-1.5 py-0.5 rounded border text-blue-400 bg-blue-950/60 border-blue-800/60 font-bold">C</strong></span>
+                            <span>逃走: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                            <span>支援: <strong class="px-1.5 py-0.5 rounded border text-amber-400 bg-amber-950/60 border-amber-800/60 font-bold">A</strong></span>
+                        </div>
+                        <span class="text-emerald-400 font-bold hover:underline text-xs">詳細 &gt;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Tab Content -->
+        <div id="items" class="tab-content hidden space-y-6">
+            <div class="border-l-4 border-emerald-500 pl-4">
+                <h3 class="text-2xl font-extrabold text-white">アイテムショップ図鑑</h3>
+                <p class="text-gray-400 text-sm">ゲーム内で購入・使用できる強力なアイテム一覧</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 1. オレンジアップル -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">5G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/orangeapple.png" alt="オレンジアップル" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">オレンジアップル</h4>
+                        </div>
+                        <div class="text-xs text-yellow-400 font-bold mb-2">【消費アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        体力を10回復する
+                    </div>
+                </div>
+
+                <!-- 2. スタンガン -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">10G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/stan_gun.png" alt="スタンガン" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">スタンガン</h4>
+                        </div>
+                        <div class="text-xs text-yellow-400 font-bold mb-2">【消費アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        左クリックで殴った相手をスタンさせる
+                    </div>
+                </div>
+
+                <!-- 3. ポリスレーダー -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">15G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/police_radar.png" alt="ポリスレーダー" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">ポリスレーダー</h4>
+                        </div>
+                        <div class="text-xs text-yellow-400 font-bold mb-2">【回数制限アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        1番近くにいる警察の位置が10秒間わかる（5回使うと壊れる）
+                    </div>
+                </div>
+
+                <!-- 4. 透明マント -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">20G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/toumeimanto.png" alt="透明マント" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">透明マント</h4>
+                        </div>
+                        <div class="text-xs text-yellow-400 font-bold mb-2">【消費アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        5秒間透明になる
+                    </div>
+                </div>
+
+                <!-- 5. 絆創膏 -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">30G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/bandage.png" alt="絆創膏" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">絆創膏</h4>
+                        </div>
+                        <div class="text-xs text-emerald-400 font-bold mb-2">【装備アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        インベントリにあるだけで回復時間が少し早くなる
+                    </div>
+                </div>
+
+                <!-- 6. ロケットの燃料 -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">40G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/rocket_fuel.png" alt="ロケットの燃料" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">ロケットの燃料</h4>
+                        </div>
+                        <div class="text-xs text-yellow-400 font-bold mb-2">【消費アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        使用すると共通脱出時間を5秒縮める
+                    </div>
+                </div>
+
+                <!-- 7. 犬から盗った鍵 -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">50G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/dog_key.png" alt="犬から盗った鍵" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">犬から盗った鍵</h4>
+                        </div>
+                        <div class="text-xs text-emerald-400 font-bold mb-2">【装備アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        インベントリにあるだけで救出時間が早くなる
+                    </div>
+                </div>
+
+                <!-- 8. 抜け道スプーン -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">80G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/loophole_spoon.png" alt="抜け道スプーン" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">抜け道スプーン</h4>
+                        </div>
+                        <div class="text-xs text-yellow-400 font-bold mb-2">【消費アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        使用すると牢屋からランダムな場所に脱出する
+                    </div>
+                </div>
+
+                <!-- 9. スナイパーライフル -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">250G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/sniper_rifle.png" alt="スナイパーライフル" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">スナイパーライフル</h4>
+                        </div>
+                        <div class="text-xs text-red-400 font-bold mb-2">【消費アイテム / 持ち帰れない】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        当てた相手を倒す
+                    </div>
+                </div>
+
+                <!-- 10. 防犯ブザー -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-gray-800 text-emerald-400 px-2.5 py-1 rounded">Shop Item</span>
+                            <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-2.5 py-1 rounded border border-yellow-800/40">25G</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="images/item_icon/personal_alarm.png" alt="防犯ブザー" class="w-10 h-10 object-contain bg-gray-800 p-1 rounded-lg border border-gray-700">
+                            <h4 class="text-xl font-bold text-white">防犯ブザー</h4>
+                        </div>
+                        <div class="text-xs text-yellow-400 font-bold mb-2">【消費アイテム】</div>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-800/50 p-2 rounded">
+                        近くの警察を呼ぶ
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patch Notes Tab Content -->
+        <div id="patch" class="tab-content hidden space-y-6">
+            <div class="border-l-4 border-emerald-500 pl-4">
+                <h3 class="text-2xl font-extrabold text-white">パッチノート（更新履歴）</h3>
+                <p class="text-gray-400 text-sm">ゲームのアップデート履歴や変更点</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-extrabold text-emerald-400">β 1.2.0 - お金の概念を追加</h4>
+                        <span class="text-xs text-gray-400 bg-gray-800 px-2.5 py-1 rounded">2026.10</span>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-300 list-disc list-inside">
+                        <li>スコアがお金になってそれで職業やアイテムを購入できるようになった。</li>
+                        <li>ミッションをそれなりに追加しました。</li>
+                        <li>マップの種類が少し増えました</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 職業詳細モーダル -->
+    <div id="job-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4" onclick="closeJobModal()">
+        <!-- モーダル全体のカード枠（サイズ感を index6_3.html のテイストに合わせて調整） -->
+        <div class="bg-[#151c28] border border-emerald-500/50 rounded-2xl max-w-[520px] w-full p-6 sm:p-8 space-y-6 relative glow-box shadow-2xl" onclick="event.stopPropagation()">
+            <!-- 閉じるボタン -->
+            <button onclick="closeJobModal()" class="absolute top-4 right-4 text-[#8b9bb4] hover:text-white bg-[#212c3d] hover:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition">×</button>
+
+            <!-- ヘッダー情報 -->
+            <div class="flex items-center gap-4">
+                <div class="w-[72px] h-[72px] bg-[#212c3d] rounded-xl flex items-center justify-center p-2 border border-gray-700 shrink-0">
+                    <img id="modal-img" src="" alt="" class="w-full h-full object-contain">
+                </div>
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <span id="modal-no" class="text-xs font-bold bg-[#1a2936] text-[#00d294] px-2.5 py-1 rounded"></span>
+                        <span id="modal-price" class="text-xs sm:text-sm font-extrabold text-[#ffc72c] bg-[#2a2215] px-2.5 py-1 rounded border border-[#4d3a18]"></span>
+                    </div>
+                    <h3 id="modal-name" class="text-2xl sm:text-[28px] font-black text-white tracking-wide"></h3>
+                </div>
+            </div>
+
+            <!-- ステータス一覧 -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-gray-950/60 p-4 rounded-xl border border-gray-800 text-sm">
+                <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400 text-xs block mb-0.5">脱出時間</span>
+                    <span id="modal-escape" class="text-white font-extrabold text-base"></span>
+                </div>
+                <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400 text-xs block mb-0.5">回復時間</span>
+                    <span id="modal-recover" class="text-white font-extrabold text-base"></span>
+                </div>
+                <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400 text-xs block mb-0.5">救出時間</span>
+                    <span id="modal-rescue" class="text-white font-extrabold text-base"></span>
+                </div>
+                <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400 text-xs block mb-0.5">攻撃力</span>
+                    <span id="modal-atk" class="text-red-400 font-extrabold text-base"></span>
+                </div>
+                <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400 text-xs block mb-0.5">防御力</span>
+                    <span id="modal-def" class="text-blue-400 font-extrabold text-base"></span>
+                </div>
+                <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400 text-xs block mb-0.5">スキルクールタイム</span>
+                    <span id="modal-ct" class="text-amber-400 font-extrabold text-base"></span>
+                </div>
+            </div>
+
+            <!-- スキル詳細 -->
+            <div class="space-y-2 bg-cyan-950/20 border border-cyan-900/40 p-4 rounded-xl">
+                <div id="modal-skill-title" class="text-cyan-400 font-extrabold text-base"></div>
+                <p id="modal-skill-desc" class="text-gray-200 text-sm leading-relaxed"></p>
+            </div>
+
+            <!-- 閉じるボタン（下部） -->
+            <div class="text-center pt-2">
+                <button onclick="closeJobModal()" class="w-full py-3 bg-gray-800 hover:bg-emerald-600 hover:text-gray-900 text-white font-bold rounded-xl transition">閉じる</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
