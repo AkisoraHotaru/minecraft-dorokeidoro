@@ -32,7 +32,7 @@
         // 職業詳細モーダルのデータ（全25種類 ＋ 一覧用のランク情報）
         const jobData = {
             1: {
-                no: "No.001", name: "無職", price: "0G (初期)", img: "images/job_icon/musyoku.png",
+                no: "No.001", name: "無職", price: "0G", img: "images/job_icon/musyoku.png",
                 escape: "15秒", recover: "3秒", rescue: "5秒", atk: "15", def: "5", ct: "なし",
                 skill: "【スキル：なし】", desc: "脱出時にもらえるスコアが1.5倍",
                 rankAtk: "C", rankEsc: "C", rankSup: "D"
@@ -161,7 +161,7 @@
                 no: "No.022", name: "ラバー", price: "500G", img: "images/job_icon/lover_heart.png",
                 escape: "30秒 <span class='text-yellow-400'>(60秒)</span>", recover: "3秒 <span class='text-yellow-400'>(1秒･10秒)</span>", rescue: "5秒 <span class='text-yellow-400'>(1秒･10秒)</span>", atk: "15 <span class='text-yellow-400'>(40･3)</span>", def: "5 <span class='text-yellow-400'>(10･0)</span>", ct: "0秒",
                 skill: "【スキル：ラブハート】", desc: "パートナーといると能力超UP",
-                rankAtk: "SS", rankEsc: "SS", rankSup: "SS"
+                rankAtk: "?", rankEsc: "?", rankSup: "?"
             },
             23: {
                 no: "No.023", name: "株主優待者", price: "300G", img: "images/job_icon/yutaiken.png",
@@ -215,9 +215,8 @@
     <header class="bg-gray-900 border-b border-gray-800 sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-<!-- 例：緑色の部分を「Official Guide」などにしたり、文字をスッキリさせる場合 -->
-<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 font-bold px-2.5 py-1 rounded-md text-xs sm:text-sm">監獄からの大脱獄</span>
-<h1 class="text-lg sm:text-xl font-extrabold tracking-wider text-white">マイクラドロケイドロ</h1>
+                <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 font-bold px-2.5 py-1 rounded-md text-xs sm:text-sm">監獄からの大脱獄</span>
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-wider text-white">マイクラドロケイドロ</h1>
             </div>
             <nav class="flex flex-wrap justify-center gap-2 text-sm sm:text-base font-bold">
                 <button id="btn-rules" onclick="switchTab('rules')" class="tab-btn px-4 py-2 bg-emerald-600 text-gray-900 rounded-lg transition">基本ルール</button>
@@ -229,51 +228,54 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 py-8 space-y-12">
-        <!-- Hero Section -->
-        <section class="text-center py-10 bg-gradient-to-b from-gray-900 to-gray-900/50 rounded-2xl border border-gray-800 p-6 glow-box">
-            <span class="text-emerald-400 font-bold text-sm tracking-widest uppercase bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-800/50">Minecraft MiniGame Guide</span>
-            <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-4 mb-4">マイクラドロケイドロ</h2>
-            <p class="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-                CPU警察の監視をかいくぐり、脱獄を目指せ！<br>多彩な職業とミッション、仲間との協力？をして大脱獄！
-            </p>
-        </section>
+        <!-- Rules Tab Content (Hero Section & Rules) -->
+        <div id="rules" class="tab-content space-y-12">
+            <!-- Hero Section -->
+            <section class="text-center py-10 bg-gradient-to-b from-gray-900 to-gray-900/50 rounded-2xl border border-gray-800 p-6 glow-box">
+                <span class="text-emerald-400 font-bold text-sm tracking-widest uppercase bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-800/50">Minecraft MiniGame Guide</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-4 mb-4">マイクラドロケイドロ</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+                    CPU警察の監視をかいくぐり、脱獄を目指せ！<br>多彩な職業とミッション、仲間との協力？をして大脱獄！
+                </p>
+            </section>
 
-        <!-- Rules Tab Content -->
-        <div id="rules" class="tab-content space-y-6">
-            <div class="border-l-4 border-emerald-500 pl-4">
-                <h3 class="text-2xl font-extrabold text-white">ゲーム基本ルール & システム</h3>
-                <p class="text-gray-400 text-sm">ゲームの進行やステータスの仕様について</p>
-            </div>
+            <!-- Rules Content -->
+            <div class="space-y-6">
+                <div class="border-l-4 border-emerald-500 pl-4">
+                    <h3 class="text-2xl font-extrabold text-white">ゲーム基本ルール & システム</h3>
+                    <p class="text-gray-400 text-sm">ゲームの進行やステータスの仕様について</p>
+                </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">⏱️ 時間とミッション</h4>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>時間</strong>10分経過後に脱出口が出現！以降、<strong>1分ごとに警察が増加</strong>していきます。</div></li>
-                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>ミッション：</strong>10分間に約5回発生。失敗すると警察が増えるなどのペナルティが発生します。</div></li>
-                    </ul>
-                </div>
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">🚪 脱出口の仕組み</h4>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>1階（個人脱出口）：</strong>マップの中心に出現。シフト長押しで自分だけが脱獄可能。</div></li>
-                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>2階（共通脱出口）：</strong>牢屋の対角線上。「人数×12.5秒」のシフト長押しで開放。一度開けば誰でも右クリックで脱獄可能！</div></li>
-                    </ul>
-                </div>
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">📊 ステータスの詳細</h4>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>脱出時間：</strong>個人の脱獄地点で脱獄成功するまでに必要な時間。</div></li>
-                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>回復時間：</strong>シフトを押し続けてHPを回復できるまでの時間（自動回復なし）。</div></li>
-                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>救出時間：</strong>牢屋の前でシフトを押して仲間を救出するまでの時間。</div></li>
-                    </ul>
-                </div>
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-                    <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">⚔️ 攻撃力と防御力の計算仕様</h4>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li class="flex items-start gap-2"><span class="text-red-400 font-bold">・</span><div><strong>攻撃力：</strong>そのままの数値が警察へのダメージになり、HPが0になると警察はしばらくその場で気絶して起き上がります。</div></li>
-                        <li class="flex items-start gap-2"><span class="text-blue-400 font-bold">・</span><div><strong>防御力：</strong>警察の攻撃力（基本15）から防御力を引いた数分ダメージを受けます。防御力の方が高くなった場合は1ダメージになります。</div></li>
-                    </ul>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                        <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">⏱️ 時間とミッション</h4>
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>時間：</strong>10分経過後に脱出口が出現！以降、<strong>1分ごとに警察が増加</strong>していきます。</div></li>
+                            <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>ミッション：</strong>10分間に約5回発生。失敗すると警察が増えるなどのペナルティが発生します。</div></li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                        <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">🚪 脱出口の仕組み</h4>
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>1階（個人脱出口）：</strong>マップの中心に出現。シフト長押しで自分だけが脱獄可能。</div></li>
+                            <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>2階（共通脱出口）：</strong>牢屋の対角線上。「人数×12.5秒」のシフト長押しで開放。一度開けば誰でも右クリックで脱獄可能！</div></li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                        <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">📊 ステータスの詳細</h4>
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>脱出時間：</strong>個人の脱獄地点で脱獄成功するまでに必要な時間。</div></li>
+                            <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>回復時間：</strong>シフトを押し続けてHPを回復できるまでの時間（自動回復なし）。</div></li>
+                            <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">・</span><div><strong>救出時間：</strong>牢屋の前でシフトを押して仲間を救出するまでの時間。</div></li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+                        <h4 class="text-lg font-bold text-emerald-400 flex items-center gap-2">⚔️ 攻撃力と防御力の計算仕様</h4>
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start gap-2"><span class="text-red-400 font-bold">・</span><div><strong>攻撃力：</strong>そのままの数値が警察へのダメージになり、HPが0になると警察はしばらくその場で気絶して起き上がります。</div></li>
+                            <li class="flex items-start gap-2"><span class="text-blue-400 font-bold">・</span><div><strong>防御力：</strong>警察の攻撃力（基本15）から防御力を引いた数分ダメージを受けます。防御力の方が高くなった場合は1ダメージになります。</div></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -281,7 +283,7 @@
         <!-- Jobs Tab Content -->
         <div id="jobs" class="tab-content hidden space-y-6">
             <div class="border-l-4 border-emerald-500 pl-4">
-                <h3 class="text-2xl font-extrabold text-white">職業・役職図鑑</h3>
+                <h3 class="text-2xl font-extrabold text-white">職業図鑑</h3>
                 <p class="text-gray-400 text-sm">カードをクリックすると、詳細な数値やスキル効果を確認できます！</p>
             </div>
 
@@ -298,7 +300,7 @@
                                 <h4 class="text-lg font-bold text-white">無職</h4>
                             </div>
                         </div>
-                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">0G </span>
+                        <span class="text-sm font-extrabold text-yellow-400 bg-yellow-950/40 px-3 py-1.5 rounded-lg border border-yellow-800/40">0G</span>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-gray-800/80 text-[13px] text-gray-400 font-medium">
                         <div class="flex gap-2.5 items-center">
