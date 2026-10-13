@@ -39,7 +39,7 @@
             },
             2: {
                 no: "No.002", name: "スポーツ選手", price: "100G", img: "images/job_icon/syunsoku.png",
-                escape: "16秒", recover: "3秒", rescue: "3.5秒", atk: "20", def: "5", ct: "40秒",
+                escape: "16秒", recover: "3秒", rescue: "3.5秒", atk: "20", def: "5", ct: "20秒",
                 skill: "【スキル：俊足】", desc: "3秒間足が速くなる",
                 rankAtk: "B", rankEsc: "A", rankSup: "D"
             },
@@ -141,7 +141,7 @@
             },
             19: {
                 no: "No.019", name: "海賊", price: "500G", img: "images/job_icon/ikari.png",
-                escape: "15秒", recover: "4秒", rescue: "4秒", atk: "20", def: "5", ct: "15秒",
+                escape: "15秒", recover: "4秒", rescue: "4秒", atk: "20", def: "5", ct: "10秒",
                 skill: "【スキル：キャプテンの碇】", desc: "壁に当たったらそこまで直進、人に当たったら引き寄せる<br><span class='text-yellow-300'>近くの宝箱の位置がわかる</span>",
                 rankAtk: "A", rankEsc: "A", rankSup: "B"
             },
@@ -159,7 +159,7 @@
             },
             22: {
                 no: "No.022", name: "ラバー", price: "500G", img: "images/job_icon/lover_heart.png",
-                escape: "30秒 <span class='text-yellow-400'>(60秒)</span>", recover: "3秒 <span class='text-yellow-400'>(1秒･10秒)</span>", rescue: "5秒 <span class='text-yellow-400'>(1秒･10秒)</span>", atk: "15 <span class='text-yellow-400'>(40･3)</span>", def: "5 <span class='text-yellow-400'>(10･0)</span>", ct: "0秒",
+                escape: "30秒 <span class='text-yellow-400'>(60秒)</span>", recover: "3秒 <span class='text-yellow-400'>(2秒･10秒)</span>", rescue: "5秒 <span class='text-yellow-400'>(1秒･10秒)</span>", atk: "15 <span class='text-yellow-400'>(40･3)</span>", def: "5 <span class='text-yellow-400'>(10･0)</span>", ct: "0秒",
                 skill: "【スキル：ラブハート】", desc: "パートナーといると能力超UP",
                 rankAtk: "?", rankEsc: "?", rankSup: "?"
             },
@@ -177,7 +177,7 @@
             },
             25: {
                 no: "No.025", name: "ものまね士", price: "500G", img: "images/job_icon/monomanesi.png",
-                escape: "20秒", recover: "3秒", rescue: "5秒", atk: "10", def: "5", ct: "25秒",
+                escape: "18秒", recover: "3秒", rescue: "5秒", atk: "10", def: "5", ct: "25秒",
                 skill: "【スキル：ものまねドール】", desc: "デコイになる人形を置く",
                 rankAtk: "C", rankEsc: "A", rankSup: "A"
             }
@@ -1087,6 +1087,33 @@
                 <p class="text-gray-400 text-sm">ゲームのアップデート履歴や変更点</p>
             </div>
 
+
+            <div class="space-y-4">
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-extrabold text-emerald-400">β 1.2.1 - バグ修正とバランス調整</h4>
+                        <span class="text-xs text-gray-400 bg-gray-800 px-2.5 py-1 rounded">2026.10</span>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-300 list-disc list-inside">
+                        <li>警察が階段でスタックするのを修正しました。</li>
+                        <li>警察のHPがある条件下で減らなくなるのを修正しました。</li>
+                        <li>詰むステージを修正しました。</li>
+                        <li>抜け道スプーンとスナイパーライフルを買えなくしました。</li>
+                        <li>マーカーが出すぎる問題を修正しました。</li>
+                        <li>スポーツ選手が料理人の下位互換になりかけてたのでスキルクールタイムを40秒から20秒にしました。</li>
+                        <li>スタン中はスキルを使用できなくしました。</li>
+                        <li>探偵が牢屋でスキルを使えなくしました</li>
+                        <li>ラバーが強すぎたので強くなる範囲を10マス以内から5マス以内に変更しました。近くにパートナーがいる時にラバーがプレイヤーを殴る際の攻撃力を上げました。回復時間も増やしました。</li>
+                        <li>ものまね士の脱出時間を2秒短くしました。</li>
+                        <li>ゲーム終了時に特定の条件下で無職になるのを修正しました。</li>
+                        <li>救出とミッション達成時の獲得できるスコアを増やしました。</li>
+                        <li>海賊のスキルの射程を伸ばしてスキルクールタイムも15秒から10秒にしました。</li>
+
+                    </ul>
+                </div>
+            </div>
+
+
             <div class="space-y-4">
                 <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-3">
                     <div class="flex justify-between items-center">
@@ -1097,14 +1124,15 @@
                         <li>スコアがお金になってそれで職業やアイテムを購入できるようになりました。</li>
                         <li>ゲームの途中で宝箱が10個出現しアイテムをゲットできるようになりました。最後の1つはレアアイテムが出やすい。職業によっては近くの宝箱の位置がわかります。</li>
                         <li>ミッションをそれなりに追加しました。</li>
-                        <li>マップの種類が少し増えました</li>
-                        <li>教師、料理人、花火師、音楽家、車掌、海賊、忍者、カメラマン、ラバー、ボディビルダー、ものまね士の職業を追加しました</li>
-                        <li>医者の近くにいる味方の回腹速度がUPするようになりました</li>
+                        <li>マップの種類が少し増えました。</li>
+                        <li>教師、料理人、花火師、音楽家、車掌、海賊、忍者、カメラマン、ラバー、ボディビルダー、ものまね士の職業を追加しました。</li>
+                        <li>医者の近くにいる味方の回腹速度がUPするようになりました、</li>
                         <li>アイドルがあまりにも弱いとアイドル研究生に言われたので回復速度を早めて回復範囲も広げました。</li>
-                        <li>魔法使いの魔法が頭付近だと当たりずらいのを当たりやすくしました</li>
-                        <li>その他細かいバグを修正したはず</li>
+                        <li>魔法使いの魔法が頭付近だと当たりずらいのを当たりやすくしました。</li>
+                        <li>その他細かいバグを修正したはず。</li>
                     </ul>
                 </div>
+
             </div>
         </div>
     </main>
